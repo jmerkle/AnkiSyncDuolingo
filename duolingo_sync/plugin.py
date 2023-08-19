@@ -110,6 +110,15 @@ def on_add_success(add_result: AddVocabResult) -> None:
     mw.moveToState("deckBrowser")
 
 
+def generate_target(language_string, vocab):
+    if language_string == 'French' and vocab['pos'] == 'Noun':
+        if vocab['gender'] == 'Masculine':
+            return '(le/les) ' + vocab['word_string']
+        elif vocab['gender'] == 'Feminine':
+            return '(la/les) ' + vocab['word_string']
+    return vocab['word_string']
+
+
 def add_vocab(retrieve_result: VocabRetrieveResult) -> AddVocabResult:
     result = AddVocabResult()
 
@@ -137,7 +146,7 @@ def add_vocab(retrieve_result: VocabRetrieveResult) -> AddVocabResult:
             n['Gid'] = vocab['id']
             n['Gender'] = vocab['gender'] if vocab['gender'] else ''
             n['Source'] = '; '.join(translations[vocab['word_string']])
-            n['Target'] = vocab['word_string']
+            n['Target'] = generate_target(retrieve_result.language_string, vocab)
             n['Pronunciation'] = vocab['normalized_string'].strip()
             n['Target Language'] = retrieve_result.language_string
             n.addTag(retrieve_result.language_string)
